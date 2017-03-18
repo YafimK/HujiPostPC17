@@ -9,14 +9,14 @@
     tools:context="com.kazak.simplechat.ChatWindow">
 
     <ListView
-        android:id="@+id/msgview"
+        android:id="@+id/chatMsgWin"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@null"
         android:divider="@null"
         android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll"></ListView>
+        android:transcriptMode="alwaysScroll" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,17 +25,17 @@
         android:weightSum="3">
 
         <EditText
-            android:id="@+id/msg"
+            android:id="@+id/chatMsgBox"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="2" />
 
         <Button
-            android:id="@+id/send"
+            android:id="@+id/chatSendBtn"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="Send" />
+            android:text="Press to send message" />
 
     </LinearLayout>
 

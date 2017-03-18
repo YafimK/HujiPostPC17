@@ -16,7 +16,6 @@ public class ChatWindow extends AppCompatActivity {
     private ChatArrayAdapter chatArrayAdapter;
     private ListView listView;
     private EditText chatText;
-    private Button buttonSend;
     private boolean side = false;
 
     @Override
@@ -24,13 +23,13 @@ public class ChatWindow extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_window);
 
-        buttonSend = (Button) findViewById(R.id.send);
-        listView = (ListView) findViewById(R.id.msgview);
+        Button buttonSend = (Button) findViewById(R.id.chatSendBtn);
+        listView = (ListView) findViewById(R.id.chatMsgWin);
 
         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.right);
         listView.setAdapter(chatArrayAdapter);
 
-        chatText = (EditText) findViewById(R.id.msg);
+        chatText = (EditText) findViewById(R.id.chatMsgBox);
         chatText.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -49,7 +48,6 @@ public class ChatWindow extends AppCompatActivity {
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         listView.setAdapter(chatArrayAdapter);
 
-        //to scroll the list view to bottom on data change
         chatArrayAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
