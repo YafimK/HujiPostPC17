@@ -30,4 +30,6 @@ class CoolCursorAdapter extends SimpleCursorAdapter {
 
         return view;
     }
+
+
 }

@@ -7,19 +7,22 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
-public class MainActivity extends ListActivity {
+import org.w3c.dom.Text;
+
+public class MainActivity extends AppCompatActivity {
     private ListAdapter todoListAdapter;
     private TodoListSQLHelper todoListSQLHelper;
 
@@ -29,10 +32,33 @@ public class MainActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final ListView listView = (ListView) findViewById(R.id.list);
         final MainActivity self = this;
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder todoTaskBuilder = new AlertDialog.Builder(self);
+                todoTaskBuilder.setTitle("Delete task item");
+//                View v = (View) view.getParent();
+                TextView todoTV = (TextView) view.findViewById(R.id.taskDesc);
+                String todoTaskItem = todoTV.getText().toString();
+                todoTaskBuilder.setMessage("Delete task: " + todoTaskItem);
+
+                final View view1 = view;
+                todoTaskBuilder.setPositiveButton("Confirm deletion of the task", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        onDoneButtonClick(view1);
+                        updateTodoList();
+                    }
+
+                });
+                todoTaskBuilder.setNegativeButton("Cancel", null);
+                todoTaskBuilder.create().show();
+                return false;
+            }
+        });
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,7 +77,7 @@ public class MainActivity extends ListActivity {
                         values.clear();
 
                         //write the Todo task input into database table
-                        values.put(TodoListSQLHelper.COL1_TASK, todoTaskInput);
+                        values.put(TodoListSQLHelper.TASK_DB_COLUMN, todoTaskInput);
                         sqLiteDatabase.insertWithOnConflict(TodoListSQLHelper.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 
                         //update the Todo task list UI
@@ -70,36 +96,37 @@ public class MainActivity extends ListActivity {
     }
 
     private void updateTodoList() {
+        ListView listView = (ListView) findViewById(R.id.list);
         todoListSQLHelper = new TodoListSQLHelper(this);
         SQLiteDatabase sqLiteDatabase = todoListSQLHelper.getReadableDatabase();
 
-        //cursor to read todo task list from database
         Cursor cursor = sqLiteDatabase.query(TodoListSQLHelper.TABLE_NAME,
-                new String[]{TodoListSQLHelper._ID, TodoListSQLHelper.COL1_TASK},
+                new String[]{TodoListSQLHelper._ID, TodoListSQLHelper.TASK_DB_COLUMN},
                 null, null, null, null, null);
 
-        //binds the todo task list with the UI
         todoListAdapter = new CoolCursorAdapter(
                 this,
                 R.layout.task,
                 cursor,
-                new String[]{TodoListSQLHelper.COL1_TASK},
-                new int[]{R.id.todoTaskTV},
+                new String[]{TodoListSQLHelper.TASK_DB_COLUMN},
+                new int[]{R.id.taskDesc},
                 0
         );
 
-        this.setListAdapter(todoListAdapter);
+        listView.setAdapter(todoListAdapter);
+
+
+
     }
 
 
-    //closing the todo task item
     public void onDoneButtonClick(View view) {
         View v = (View) view.getParent();
-        TextView todoTV = (TextView) v.findViewById(R.id.todoTaskTV);
+        TextView todoTV = (TextView) v.findViewById(R.id.taskDesc);
         String todoTaskItem = todoTV.getText().toString();
 
         String deleteTodoItemSql = "DELETE FROM " + TodoListSQLHelper.TABLE_NAME +
-                " WHERE " + TodoListSQLHelper.COL1_TASK + " = '" + todoTaskItem + "'";
+                " WHERE " + TodoListSQLHelper.TASK_DB_COLUMN + " = '" + todoTaskItem + "'";
 
         todoListSQLHelper = new TodoListSQLHelper(this);
         SQLiteDatabase sqlDB = todoListSQLHelper.getWritableDatabase();

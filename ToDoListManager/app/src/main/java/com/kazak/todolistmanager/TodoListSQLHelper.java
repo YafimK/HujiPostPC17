@@ -7,20 +7,19 @@ import android.provider.BaseColumns;
 
 public class TodoListSQLHelper extends SQLiteOpenHelper {
 
-    public static final String DB_NAME = "com.javapapers.androidtodo";
-    public static final String TABLE_NAME = "TODO_LIST";
-    public static final String COL1_TASK = "todo";
+    public static final String DB_NAME = "com.kazak.todolist";
+    public static final String TABLE_NAME = "TASKS";
+    public static final String TASK_DB_COLUMN = "task";
     public static final String _ID = BaseColumns._ID;
 
     public TodoListSQLHelper(Context context) {
-        //1 is todo list database version
         super(context, DB_NAME, null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqlDB) {
         String createTodoListTable = "CREATE TABLE " + TABLE_NAME + " ( _id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL1_TASK + " TEXT)";
+                TASK_DB_COLUMN + " TEXT)";
         sqlDB.execSQL(createTodoListTable);
     }
 
