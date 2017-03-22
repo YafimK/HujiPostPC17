@@ -2,6 +2,7 @@ package com.kazak.todolistmanager;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,14 @@ class CoolCursorAdapter extends SimpleCursorAdapter {
     @Override
     public View getView (int position, View convertView, ViewGroup parent) {
         View view = super.getView(position, convertView, parent);
-        if (position == 10) {
-            // set background color = red;
+        if((position % 3) == 0 ){
+            view.setBackgroundColor(Color.RED);
+        } else if((position % 3) == 1 ){
+            view.setBackgroundColor(Color.GREEN);
         } else {
-            // set background color = green;
+            view.setBackgroundColor(Color.BLUE);
         }
+
         return view;
     }
 }

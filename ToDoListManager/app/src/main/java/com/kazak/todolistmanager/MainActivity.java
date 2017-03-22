@@ -79,7 +79,7 @@ public class MainActivity extends ListActivity {
                 null, null, null, null, null);
 
         //binds the todo task list with the UI
-        todoListAdapter = new SimpleCursorAdapter(
+        todoListAdapter = new CoolCursorAdapter(
                 this,
                 R.layout.task,
                 cursor,
