@@ -2,6 +2,7 @@ package com.kazak.todolistmanager;
 
 import android.app.ListActivity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,12 +16,18 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import org.w3c.dom.Text;
+
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class MainActivity extends AppCompatActivity {
     private ListAdapter todoListAdapter;
@@ -65,12 +72,30 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder todoTaskBuilder = new AlertDialog.Builder(self);
                 todoTaskBuilder.setTitle("Add Todo Task Item");
                 todoTaskBuilder.setMessage("describe the Todo task...");
+
+                LinearLayout linearLayout = new LinearLayout(self);
+                linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+
                 final EditText todoET = new EditText(self);
-                todoTaskBuilder.setView(todoET);
+                todoET.setHint("Describe the task");
+                linearLayout.addView(todoET);
+
+                final DatePicker picker = new DatePicker(self);
+                linearLayout.addView(picker);
+
+                linearLayout.setVerticalScrollBarEnabled(true);
+
+
+                todoTaskBuilder.setView(linearLayout);
                 todoTaskBuilder.setPositiveButton("Add Task", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String todoTaskInput = todoET.getText().toString();
+                        int selectedYearDate = picker.getYear();
+                        int selectedMonthDate = picker.getMonth();
+                        int selectedDayDate = picker.getDayOfMonth();
+                        GregorianCalendar date = new GregorianCalendar(selectedYearDate + 1900, selectedMonthDate, selectedDayDate);
                         todoListSQLHelper = new TodoListSQLHelper(self);
                         SQLiteDatabase sqLiteDatabase = todoListSQLHelper.getWritableDatabase();
                         ContentValues values = new ContentValues();
@@ -78,10 +103,13 @@ public class MainActivity extends AppCompatActivity {
 
                         //write the Todo task input into database table
                         values.put(TodoListSQLHelper.TASK_DB_COLUMN, todoTaskInput);
+                        values.put(TodoListSQLHelper.DUE_DATE_COLUMN, date.getTimeInMillis());
                         sqLiteDatabase.insertWithOnConflict(TodoListSQLHelper.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 
                         //update the Todo task list UI
                         updateTodoList();
+
+                        //TODO: update firebase!
 
                     }
 
