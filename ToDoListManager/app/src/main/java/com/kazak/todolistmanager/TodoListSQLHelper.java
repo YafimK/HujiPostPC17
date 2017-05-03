@@ -20,7 +20,8 @@ public class TodoListSQLHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqlDB) {
         String createTodoListTable = "CREATE TABLE " + TABLE_NAME + " ( _id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                TASK_DB_COLUMN + " TEXT, "+ DUE_DATE_COLUMN+" +LONG)";
+                TASK_DB_COLUMN + " TEXT, "+ DUE_DATE_COLUMN+" LONG)";
+        System.out.println(createTodoListTable);
         sqlDB.execSQL(createTodoListTable);
     }
 
